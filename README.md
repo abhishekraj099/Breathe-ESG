@@ -11,7 +11,7 @@ Backend API:
 https://breathe-esg-lhb2.onrender.com/api/records/
 
 GitHub Repository:
-https://github.com/abhishekkraj099/Breathe-ESG
+https://github.com/abhishekraj099/Breathe-ESG
 
 ## What It Does
 
