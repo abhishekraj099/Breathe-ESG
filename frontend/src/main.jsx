@@ -217,38 +217,36 @@ function RecordsTable({ records, onReview }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-line text-sm">
+      <table className="w-full min-w-[720px] table-fixed divide-y divide-line text-sm">
         <thead className="bg-field text-left text-xs uppercase tracking-wide text-slate-500">
           <tr>
-            <th className="px-4 py-3">Source</th>
-            <th className="px-4 py-3">Record</th>
-            <th className="px-4 py-3">Scope</th>
-            <th className="px-4 py-3">Category</th>
-            <th className="px-4 py-3">Activity</th>
-            <th className="px-4 py-3 text-right">kg CO2e</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Flags</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="w-[12%] px-3 py-3">Source</th>
+            <th className="w-[13%] px-3 py-3">Record</th>
+            <th className="w-[10%] px-3 py-3">Scope</th>
+            <th className="w-[12%] px-3 py-3">Category</th>
+            <th className="w-[11%] px-3 py-3 text-right">kg CO2e</th>
+            <th className="w-[11%] px-3 py-3">Status</th>
+            <th className="px-3 py-3">Flags</th>
+            <th className="w-[12%] px-3 py-3 text-right">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-line">
           {records.map((record) => (
             <tr key={record.id} className={record.suspicious ? "bg-amber-50" : "bg-white"}>
-              <td className="px-4 py-3 font-medium">{record.source_type}</td>
-              <td className="px-4 py-3">{record.source_record_id || `#${record.id}`}</td>
-              <td className="px-4 py-3">{record.scope}</td>
-              <td className="px-4 py-3">{record.category}</td>
-              <td className="px-4 py-3">{record.activity_date || "-"}</td>
-              <td className="px-4 py-3 text-right font-medium">{currency(record.emissions_kg_co2e)}</td>
-              <td className="px-4 py-3">
+              <td className="break-words px-3 py-3 font-medium">{record.source_type}</td>
+              <td className="break-words px-3 py-3">{record.source_record_id || `#${record.id}`}</td>
+              <td className="break-words px-3 py-3">{record.scope}</td>
+              <td className="break-words px-3 py-3">{record.category}</td>
+              <td className="px-3 py-3 text-right font-medium">{currency(record.emissions_kg_co2e)}</td>
+              <td className="px-3 py-3">
                 <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold">
                   {record.locked_for_audit ? "LOCKED" : record.review_status}
                 </span>
               </td>
-              <td className="max-w-xs px-4 py-3 text-xs text-slate-600">
+              <td className="break-words px-3 py-3 text-xs leading-5 text-slate-600">
                 {[...record.flags, ...record.validation_errors].join(", ") || "-"}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-3 py-3">
                 <div className="flex justify-end gap-2">
                   <button
                     aria-label="Approve record"
