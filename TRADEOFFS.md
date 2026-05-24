@@ -19,3 +19,5 @@ Uploads are parsed synchronously. This is acceptable for small prototype files a
 ## Full Immutability Skipped
 
 Approved rows are marked as locked for audit, but the database does not enforce a hard immutability rule. Production should block edits to locked records except through an explicit reopen workflow with elevated permissions and audit logging.
+
+The reason for locking reviewed records is audit integrity. Once an analyst signs off, the value should not silently change because auditors need a defensible trail from the source row to the final approved emissions record. If a record must be corrected later, a production system should require a controlled reopen workflow with senior approval and a new audit-log entry.

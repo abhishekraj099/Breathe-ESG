@@ -18,9 +18,9 @@ PLANTS = {
     "1000": "Delhi Manufacturing",
     "2000": "Mumbai Depot",
     "3000": "Bengaluru Assembly",
-    "PL001": "Delhi Manufacturing",
-    "PL002": "Mumbai Depot",
-    "PL003": "Bengaluru Assembly",
+    "PL001": "Delhi Plant",
+    "PL002": "Mumbai Port",
+    "PL003": "Pune Factory",
 }
 
 MATERIAL_FACTORS = {
