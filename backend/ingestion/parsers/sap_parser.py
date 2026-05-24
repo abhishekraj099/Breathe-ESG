@@ -1,4 +1,5 @@
 from decimal import Decimal
+import re
 
 from .common import ParsedRecord, parse_date, parse_decimal, read_csv
 
@@ -35,6 +36,18 @@ UNIT_TO_LITERS = {
 }
 
 
+def normalize_plant_code(value):
+    text = (value or "").strip()
+    if text in PLANTS:
+        return text
+
+    match = re.search(r"\b(\d{4})(?:\.0)?\b", text)
+    if match:
+        return match.group(1)
+
+    return text
+
+
 def parse(uploaded_file):
     rows = read_csv(uploaded_file)
     seen_documents = set()
@@ -49,11 +62,15 @@ def parse(uploaded_file):
         flags = []
         errors = []
         document = (row.get("Dokument") or "").strip()
-        plant = (row.get("Werks") or "").strip()
+        raw_plant = (row.get("Werks") or "").strip()
+        plant = normalize_plant_code(raw_plant)
         material = (row.get("Material") or "").strip().upper()
         unit = (row.get("Einheit") or "").strip().upper()
         quantity = parse_decimal(row.get("Menge"))
-        posting_date = parse_date(row.get("Buchungsdatum"), ["%Y-%m-%d", "%d.%m.%Y", "%d/%m/%Y"])
+        posting_date = parse_date(
+            row.get("Buchungsdatum"),
+            ["%Y-%m-%d", "%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y", "%m/%d/%Y", "%m-%d-%Y"],
+        )
 
         if not document:
             flags.append("missing_document_number")
@@ -82,6 +99,7 @@ def parse(uploaded_file):
 
         normalized = {
             "plant_code": plant,
+            "raw_plant_code": raw_plant,
             "plant_name": PLANTS.get(plant),
             "movement_type": row.get("Bewegungsart"),
             "material": material,

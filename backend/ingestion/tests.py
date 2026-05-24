@@ -40,6 +40,35 @@ class IngestionApiTests(TestCase):
         )
         self.assertIn("Werks", EmissionRecord.objects.first().raw_data)
 
+    def test_sap_upload_accepts_common_export_date_and_plant_variants(self):
+        csv_content = (
+            "Werks,Buchungsdatum,Bewegungsart,Material,Menge,Einheit,Kostenstelle,Dokument\n"
+            "Plant 1000,05-01-2026,261,DIESEL-500,1200,L,CC-OPS-DEL,4900010001\n"
+            "2000.0,01/07/2026,261,PETROL-91,850,LTR,CC-FLEET-MUM,4900010002\n"
+        ).encode()
+
+        response = self.client.post(
+            "/api/upload/",
+            {
+                "source_type": "SAP_FUEL",
+                "uploaded_by": "test.analyst",
+                "file": SimpleUploadedFile(
+                    "sap_variant.csv",
+                    csv_content,
+                    content_type="text/csv",
+                ),
+            },
+            format="multipart",
+            HTTP_HOST="localhost",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["summary"]["total_rows"], 2)
+        self.assertEqual(response.data["summary"]["suspicious_rows"], 0)
+        all_flags = [flag for record in EmissionRecord.objects.all() for flag in record.flags]
+        self.assertNotIn("unknown_plant_code", all_flags)
+        self.assertNotIn("invalid_posting_date", all_flags)
+
     def test_utility_and_travel_uploads_map_scopes(self):
         utility_response = self.upload("UTILITY_ELECTRICITY", "utility_electricity.csv")
         travel_response = self.upload("CORPORATE_TRAVEL", "corporate_travel.csv")
