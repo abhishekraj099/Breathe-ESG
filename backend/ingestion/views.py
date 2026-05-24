@@ -147,6 +147,18 @@ def review_record(request, pk):
     serializer = ReviewSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
+    if serializer.validated_data["review_status"] == EmissionRecord.ReviewStatus.PENDING:
+        return Response(
+            {"detail": "Review action must approve or reject the record."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if record.review_status != EmissionRecord.ReviewStatus.PENDING:
+        return Response(
+            {"detail": "Only pending records can be reviewed."},
+            status=status.HTTP_409_CONFLICT,
+        )
+
     before = {
         "review_status": record.review_status,
         "locked_for_audit": record.locked_for_audit,
@@ -157,7 +169,10 @@ def review_record(request, pk):
     record.review_status = serializer.validated_data["review_status"]
     record.reviewed_by = serializer.validated_data["reviewed_by"]
     record.reviewed_at = timezone.now()
-    if record.review_status == EmissionRecord.ReviewStatus.APPROVED:
+    if record.review_status in {
+        EmissionRecord.ReviewStatus.APPROVED,
+        EmissionRecord.ReviewStatus.REJECTED,
+    }:
         record.locked_for_audit = True
         record.locked_at = record.reviewed_at
     else:

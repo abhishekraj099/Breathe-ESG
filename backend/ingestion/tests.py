@@ -45,6 +45,7 @@ class IngestionApiTests(TestCase):
             "Werks,Buchungsdatum,Bewegungsart,Material,Menge,Einheit,Kostenstelle,Dokument\n"
             "Plant 1000,05-01-2026,261,DIESEL-500,1200,L,CC-OPS-DEL,4900010001\n"
             "2000.0,01/07/2026,261,PETROL-91,850,LTR,CC-FLEET-MUM,4900010002\n"
+            "PL003,20260108,261,LPG,25,KG,CC-UTIL-BLR,4900010003\n"
         ).encode()
 
         response = self.client.post(
@@ -63,11 +64,39 @@ class IngestionApiTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["summary"]["total_rows"], 2)
+        self.assertEqual(response.data["summary"]["total_rows"], 3)
         self.assertEqual(response.data["summary"]["suspicious_rows"], 0)
         all_flags = [flag for record in EmissionRecord.objects.all() for flag in record.flags]
         self.assertNotIn("unknown_plant_code", all_flags)
         self.assertNotIn("invalid_posting_date", all_flags)
+        self.assertTrue(EmissionRecord.objects.filter(unit="kg").exists())
+
+    def test_travel_upload_accepts_enterprise_header_and_amount_variants(self):
+        csv_content = (
+            "Expense Report ID,Employee ID,Cost Center,Category,Travel Date,Origin,Destination,"
+            "Distance (km),Amount (INR),Currency,Merchant,PNR\n"
+            "RPT-1,E-1,CC-SALES,AIR,20260108,DEL,BOM,,\"18,500\",INR,IndiGo,PNR-1\n"
+        ).encode()
+
+        response = self.client.post(
+            "/api/upload/",
+            {
+                "source_type": "CORPORATE_TRAVEL",
+                "uploaded_by": "test.analyst",
+                "file": SimpleUploadedFile(
+                    "travel_variant.csv",
+                    csv_content,
+                    content_type="text/csv",
+                ),
+            },
+            format="multipart",
+            HTTP_HOST="localhost",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["summary"]["total_rows"], 1)
+        self.assertEqual(response.data["summary"]["suspicious_rows"], 0)
+        self.assertEqual(response.data["summary"]["rejected_rows"], 0)
 
     def test_utility_and_travel_uploads_map_scopes(self):
         utility_response = self.upload("UTILITY_ELECTRICITY", "utility_electricity.csv")
@@ -79,7 +108,7 @@ class IngestionApiTests(TestCase):
         self.assertTrue(EmissionRecord.objects.filter(scope="SCOPE_3").exists())
         self.assertTrue(
             any(
-                "missing_international_or_unknown_distance" in record.flags
+                "missing_distance" in record.flags
                 for record in EmissionRecord.objects.all()
             )
         )
@@ -101,3 +130,11 @@ class IngestionApiTests(TestCase):
         self.assertTrue(record.locked_for_audit)
         self.assertIsNotNone(record.locked_at)
         self.assertTrue(AuditLog.objects.filter(action="RECORD_APPROVED").exists())
+
+        second_response = self.client.patch(
+            f"/api/records/{record.id}/review/",
+            {"review_status": "REJECTED", "reviewed_by": "lead.analyst"},
+            format="json",
+            HTTP_HOST="localhost",
+        )
+        self.assertEqual(second_response.status_code, 409)

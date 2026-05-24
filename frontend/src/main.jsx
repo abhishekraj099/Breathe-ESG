@@ -88,7 +88,7 @@ function App() {
   }
 
   async function review(id, reviewStatus) {
-    await fetch(`${API_BASE}/records/${id}/review/`, {
+    const response = await fetch(`${API_BASE}/records/${id}/review/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -97,7 +97,9 @@ function App() {
         note: `Marked ${reviewStatus.toLowerCase()} during analyst review.`,
       }),
     });
-    setRefreshToken((value) => value + 1);
+    if (response.ok) {
+      setRefreshToken((value) => value + 1);
+    }
   }
 
   const totals = records.reduce(
@@ -212,7 +214,11 @@ function UploadCard({ source, status, onUpload }) {
 
 function RecordsTable({ records, onReview }) {
   if (!records.length) {
-    return <div className="px-4 py-12 text-center text-sm text-slate-500">No records in this view.</div>;
+    return (
+      <div className="px-4 py-12 text-center text-sm text-slate-500">
+        No records match this view.
+      </div>
+    );
   }
 
   return (
@@ -239,37 +245,72 @@ function RecordsTable({ records, onReview }) {
               <td className="break-words px-2 py-3">{record.category}</td>
               <td className="px-2 py-3 text-right font-medium">{currency(record.emissions_kg_co2e)}</td>
               <td className="px-2 py-3">
-                <span className="rounded-md bg-slate-100 px-1.5 py-1 text-[10px] font-semibold">
-                  {record.locked_for_audit ? "LOCKED" : record.review_status}
-                </span>
+                <StatusBadge status={record.review_status} />
               </td>
               <td className="px-2 py-3">
-                <div className="flex justify-end gap-1">
-                  <button
-                    aria-label="Approve record"
-                    title="Approve"
-                    onClick={() => onReview(record.id, "APPROVED")}
-                    className="rounded-md border border-line p-1.5 text-mint hover:bg-field"
-                  >
-                    <Check className="h-4 w-4" />
-                  </button>
-                  <button
-                    aria-label="Reject record"
-                    title="Reject"
-                    onClick={() => onReview(record.id, "REJECTED")}
-                    className="rounded-md border border-line p-1.5 text-red-700 hover:bg-field"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
+                {record.review_status === "PENDING" ? (
+                  <div className="flex justify-end gap-1">
+                    <button
+                      aria-label="Approve record"
+                      title="Approve"
+                      onClick={() => onReview(record.id, "APPROVED")}
+                      className="rounded-md border border-line p-1.5 text-mint hover:border-mint hover:bg-field"
+                    >
+                      <Check className="h-4 w-4" />
+                    </button>
+                    <button
+                      aria-label="Reject record"
+                      title="Reject"
+                      onClick={() => onReview(record.id, "REJECTED")}
+                      className="rounded-md border border-line p-1.5 text-red-700 hover:border-red-300 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-right text-[10px] font-medium text-slate-400">Reviewed</div>
+                )}
               </td>
-              <td className="break-words px-2 py-3 text-[10px] leading-4 text-slate-600">
-                {[...record.flags, ...record.validation_errors].join(", ") || "-"}
+              <td className="px-2 py-3">
+                <FlagList flags={[...record.flags, ...record.validation_errors]} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const styles = {
+    PENDING: "bg-slate-100 text-slate-700",
+    APPROVED: "bg-emerald-50 text-emerald-700",
+    REJECTED: "bg-red-50 text-red-700",
+  };
+
+  return (
+    <span className={`rounded-md px-1.5 py-1 text-[10px] font-semibold ${styles[status] || styles.PENDING}`}>
+      {status}
+    </span>
+  );
+}
+
+function FlagList({ flags }) {
+  if (!flags.length) {
+    return <span className="text-[10px] text-slate-400">-</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1">
+      {flags.map((flag) => (
+        <span
+          key={flag}
+          className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] leading-4 text-amber-900"
+        >
+          {flag}
+        </span>
+      ))}
     </div>
   );
 }
