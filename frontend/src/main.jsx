@@ -217,42 +217,39 @@ function RecordsTable({ records, onReview }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] table-fixed divide-y divide-line text-sm">
+      <table className="w-full table-fixed divide-y divide-line text-xs">
         <thead className="bg-field text-left text-xs uppercase tracking-wide text-slate-500">
           <tr>
-            <th className="w-[12%] px-3 py-3">Source</th>
-            <th className="w-[13%] px-3 py-3">Record</th>
-            <th className="w-[10%] px-3 py-3">Scope</th>
-            <th className="w-[12%] px-3 py-3">Category</th>
-            <th className="w-[11%] px-3 py-3 text-right">kg CO2e</th>
-            <th className="w-[11%] px-3 py-3">Status</th>
-            <th className="px-3 py-3">Flags</th>
-            <th className="w-[12%] px-3 py-3 text-right">Actions</th>
+            <th className="w-[12%] px-2 py-3">Source</th>
+            <th className="w-[14%] px-2 py-3">Record</th>
+            <th className="w-[10%] px-2 py-3">Scope</th>
+            <th className="w-[12%] px-2 py-3">Category</th>
+            <th className="w-[11%] px-2 py-3 text-right">kg CO2e</th>
+            <th className="w-[11%] px-2 py-3">Status</th>
+            <th className="w-[12%] px-2 py-3 text-right">Actions</th>
+            <th className="px-2 py-3">Flags</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-line">
           {records.map((record) => (
             <tr key={record.id} className={record.suspicious ? "bg-amber-50" : "bg-white"}>
-              <td className="break-words px-3 py-3 font-medium">{record.source_type}</td>
-              <td className="break-words px-3 py-3">{record.source_record_id || `#${record.id}`}</td>
-              <td className="break-words px-3 py-3">{record.scope}</td>
-              <td className="break-words px-3 py-3">{record.category}</td>
-              <td className="px-3 py-3 text-right font-medium">{currency(record.emissions_kg_co2e)}</td>
-              <td className="px-3 py-3">
-                <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold">
+              <td className="break-words px-2 py-3 font-medium">{record.source_type}</td>
+              <td className="break-words px-2 py-3">{record.source_record_id || `#${record.id}`}</td>
+              <td className="break-words px-2 py-3">{record.scope}</td>
+              <td className="break-words px-2 py-3">{record.category}</td>
+              <td className="px-2 py-3 text-right font-medium">{currency(record.emissions_kg_co2e)}</td>
+              <td className="px-2 py-3">
+                <span className="rounded-md bg-slate-100 px-1.5 py-1 text-[10px] font-semibold">
                   {record.locked_for_audit ? "LOCKED" : record.review_status}
                 </span>
               </td>
-              <td className="break-words px-3 py-3 text-xs leading-5 text-slate-600">
-                {[...record.flags, ...record.validation_errors].join(", ") || "-"}
-              </td>
-              <td className="px-3 py-3">
-                <div className="flex justify-end gap-2">
+              <td className="px-2 py-3">
+                <div className="flex justify-end gap-1">
                   <button
                     aria-label="Approve record"
                     title="Approve"
                     onClick={() => onReview(record.id, "APPROVED")}
-                    className="rounded-md border border-line p-2 text-mint hover:bg-field"
+                    className="rounded-md border border-line p-1.5 text-mint hover:bg-field"
                   >
                     <Check className="h-4 w-4" />
                   </button>
@@ -260,11 +257,14 @@ function RecordsTable({ records, onReview }) {
                     aria-label="Reject record"
                     title="Reject"
                     onClick={() => onReview(record.id, "REJECTED")}
-                    className="rounded-md border border-line p-2 text-red-700 hover:bg-field"
+                    className="rounded-md border border-line p-1.5 text-red-700 hover:bg-field"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
+              </td>
+              <td className="break-words px-2 py-3 text-[10px] leading-4 text-slate-600">
+                {[...record.flags, ...record.validation_errors].join(", ") || "-"}
               </td>
             </tr>
           ))}
