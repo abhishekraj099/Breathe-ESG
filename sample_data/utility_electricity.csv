@@ -1,0 +1,8 @@
+account_number,meter_id,site_name,bill_start,bill_end,kwh_consumed,peak_demand_kw,unit,tariff_code,supplier
+BY-1001,MTR-DEL-01,Delhi Manufacturing,2026-01-03,2026-02-02,18450,310,kWh,HT-IND,BSES Yamuna
+BY-1001,MTR-DEL-02,Delhi Manufacturing,2026-01-03,2026-02-02,12110,250,kWh,HT-IND,BSES Yamuna
+TP-2209,MTR-MUM-01,Mumbai Depot,2026-01-11,2026-02-10,9120,140,kWh,LT-COM,Tata Power
+MS-8842,MTR-PUN-01,Pune Warehouse,2026-01-15,2026-02-14,,85,kWh,LT-IND,MSEDCL
+BE-5581,MTR-BLR-01,Bengaluru Assembly,2026-01-20,2026-02-19,0,95,kWh,HT-IND,BESCOM
+BE-5581,MTR-BLR-02,Bengaluru Assembly,2026-01-20,2026-02-19,7440,90,MWh,HT-IND,BESCOM
+XX-9090,MTR-HYD-01,Hyderabad Office,2026-02-01,2026-01-31,3500,42,kWh,LT-COM,Unknown Utility
