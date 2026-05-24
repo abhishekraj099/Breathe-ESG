@@ -107,6 +107,7 @@ def parse(uploaded_file):
             flags.append("unknown_plant_code")
         if quantity is None:
             errors.append("missing_or_invalid_quantity")
+            flags.append("missing_or_invalid_quantity")
         elif quantity <= 0:
             flags.append("zero_or_negative_quantity")
         if unit not in UNIT_TO_LITERS and unit not in UNIT_TO_KG:
