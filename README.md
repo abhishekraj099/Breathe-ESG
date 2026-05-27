@@ -15,9 +15,7 @@ https://github.com/abhishekraj099/Breathe-ESG
 
 
 ## Screenshot
-<img width="1902" height="1027" alt="image" src="https://github.com/user-attachments/assets/33e7a1f9-46f0-4030-b177-939188703e5d" />
-<img width="1902" height="1028" alt="image" src="https://github.com/user-attachments/assets/17189297-1cda-4b85-9214-03de21c9e8e1" />
-<img width="1901" height="1028" alt="image" src="https://github.com/user-attachments/assets/2019d542-c995-41cb-9bdb-2dd028b91b02" />
+<img width="1890" height="1012" alt="image" src="https://github.com/user-attachments/assets/ac34a427-186d-4def-89d4-59b4b9a8f1b6" />
 
 
 
