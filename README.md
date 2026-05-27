@@ -103,5 +103,3 @@ They include intentional bad rows for zero quantity, missing quantities, unknown
 
 After creating the Render blueprint, update `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, and `VITE_API_BASE` if Render assigns different hostnames.
 
-
-update it

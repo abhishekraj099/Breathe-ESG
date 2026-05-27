@@ -12,6 +12,8 @@ This keeps tenancy simple and explainable for a prototype while avoiding separat
 
 Every row also stores `raw_data` as JSON. This is important because normalized ESG values must remain traceable back to the original export.
 
+The prototype does not allow analysts to edit source values directly. Instead, it records review decisions separately through `review_status`, `reviewed_by`, `reviewed_at`, and `AuditLog.before` / `AuditLog.after`. That means the original source row remains the system of record, while any review change is visible as an audit event.
+
 ## Normalization
 
 Parser modules convert source-specific fields into a common `EmissionRecord` shape:

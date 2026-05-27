@@ -12,9 +12,9 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: breathe-esg-backend.onrender.com
+        value: breathe-esg-lhb2.onrender.com
       - key: CORS_ALLOWED_ORIGINS
-        value: https://breathe-esg-frontend.onrender.com
+        value: https://breathe-esg-dun.vercel.app
       - key: DATABASE_URL
         fromDatabase:
           name: breathe-esg-db
@@ -28,7 +28,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE
-        value: https://breathe-esg-backend.onrender.com/api
+        value: https://breathe-esg-lhb2.onrender.com/api
 
 databases:
   - name: breathe-esg-db
